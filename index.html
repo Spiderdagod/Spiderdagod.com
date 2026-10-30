@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Spiderdagod, lyrical rap out of Buffalo, NY. New single &quot;Celebration&quot; out November 20, 2026, from the EP Godfall.">
+<meta property="og:image" content="https://spiderdagod.com/cover-art.jpg">
 <title>Spiderdagod</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@500;700;900&family=Archivo:wght@400;500;700;800&family=DM+Mono:wght@400;500&display=swap">
@@ -34,7 +35,10 @@ p{margin:0}
 .top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}
 .mark{font-family:var(--display);font-weight:900;font-size:clamp(56px,13vw,148px);line-height:.85;letter-spacing:.005em;margin:0;color:var(--bone)}
 .mark span{color:var(--gold)}
-.release{display:grid;gap:14px;max-width:640px}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:40px;align-items:center}
+.art{margin:0}
+.art img{display:block;width:100%;height:auto;border:1px solid var(--rule)}
+.release{display:grid;gap:14px;max-width:640px;min-width:0}
 .release h1{margin:0;font-family:var(--body);font-weight:800;font-size:clamp(26px,4.4vw,40px);line-height:1.1;text-wrap:balance}
 .release h1 em{font-style:normal;color:var(--gold)}
 .release p{color:var(--dust);max-width:56ch}
@@ -102,7 +106,8 @@ footer .wrap{padding-block:40px 56px;display:flex;flex-wrap:wrap;justify-content
 .fine{font-family:var(--mono);font-size:12px;color:var(--dust)}
 
 @media (max-width:760px){
-  .story,.air,.tiers{grid-template-columns:minmax(0,1fr)}
+  .story,.air,.tiers,.hero-grid{grid-template-columns:minmax(0,1fr)}
+  .art{max-width:420px}
   .hero .wrap{padding-block:40px 48px}
   section .wrap{padding-block:48px}
 }
@@ -117,6 +122,7 @@ footer .wrap{padding-block:40px 56px;display:flex;flex-wrap:wrap;justify-content
       <span class="eyebrow">From the EP Godfall</span>
     </div>
     <p class="mark">Spider<span>da</span>god</p>
+    <div class="hero-grid">
     <div class="release">
       <h1>New single <em>“Celebration”</em> out Friday, November 20, 2026</h1>
       <p>The first solo single since <i>Good People Die</i>, and the first look at <i>Godfall</i>, the project first announced in 2018.</p>
@@ -130,6 +136,8 @@ footer .wrap{padding-block:40px 56px;display:flex;flex-wrap:wrap;justify-content
         <a class="btn" href="https://www.youtube.com/watch?v=w7VlIhIySJs" target="_blank" rel="noopener">Watch “Still Not One”</a>
         <a class="btn" href="https://music.apple.com/us/artist/spiderdagod/580326338" target="_blank" rel="noopener">Apple Music</a>
       </div>
+    </div>
+    <figure class="art"><img src="cover-art.jpg" width="1200" height="1200" alt="Cover art: a robed figure falling through a pool of light in the dark"></figure>
     </div>
   </div>
 </header>
