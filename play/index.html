@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Godfall Arcade</title>
-<meta name="description" content="Two games from Spiderdagod's Godfall world: fall through the dark, or finish the bar. New single &quot;Celebration&quot; out November 20, 2026.">
+<meta name="description" content="Three games from Spiderdagod's Godfall world: fall through the dark, finish the bar, or test your trivia. New single &quot;Celebration&quot; out November 20, 2026.">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
@@ -32,8 +32,11 @@ button{font:inherit;color:inherit}
 h1{margin:0;font-family:var(--display);font-weight:900;font-size:clamp(40px,11vw,60px);line-height:.9}
 h1 span{color:var(--gold)}
 .sub{margin:0;color:var(--dust);font-size:15px}
-.tabs{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--rule)}
-.tabs a{text-decoration:none;text-align:center;padding:12px 8px;font-weight:800;font-size:14px;letter-spacing:.05em;text-transform:uppercase;color:var(--dust)}
+.tabs{display:grid;grid-template-columns:1fr 1.25fr 1fr;border:1px solid var(--rule)}
+.tabs a{text-decoration:none;text-align:center;padding:12px 6px;font-weight:800;font-size:13px;letter-spacing:.03em;text-transform:uppercase;color:var(--dust)}
+.fact{margin:0;font-size:14px;color:var(--dust);min-height:2.8em}
+.fact b{color:var(--gold)}
+.q{margin:0;font-family:var(--body);font-weight:700;font-size:clamp(19px,5vw,24px);line-height:1.35;min-height:3em;text-wrap:balance}
 .tabs a[aria-current="page"]{background:var(--bone);color:var(--night)}
 .panel{display:grid;gap:12px}
 
@@ -52,10 +55,10 @@ canvas{display:block;width:100%;height:100%}
 .skin{display:grid;justify-items:center;gap:6px;width:108px;padding:10px 8px;border:1px solid var(--rule);background:var(--night);font-family:var(--mono);font-size:12px;color:var(--dust);cursor:pointer}
 .skin img{height:58px;width:auto}
 .skin[aria-pressed="true"]{border-color:var(--gold);color:var(--bone)}
-.mascot{height:120px;width:auto;justify-self:center}
+.mascot{height:96px;width:auto;justify-self:center}
 
 /* finish the bar */
-.bars{position:relative;border:1px solid var(--rule);background:var(--ash);min-height:420px;display:grid;align-content:start;gap:18px;padding:20px}
+.bars{position:relative;border:1px solid var(--rule);background:var(--ash);min-height:500px;display:grid;align-content:start;gap:18px;padding:20px}
 .bars .top{display:flex;justify-content:space-between;font-family:var(--mono);font-size:13px;color:var(--dust);font-variant-numeric:tabular-nums}
 .timer{height:4px;background:var(--rule)}
 .timer i{display:block;height:100%;width:100%;background:var(--gold)}
@@ -76,10 +79,11 @@ canvas{display:block;width:100%;height:100%}
 <div class="wrap">
   <a class="back" href="../">← spiderdagod.com</a>
   <h1>Godfall <span>Arcade</span></h1>
-  <p class="sub">Two games from the Godfall world. New single “Celebration” out Nov 20.</p>
+  <p class="sub">Three games from the Godfall world. New single “Celebration” out Nov 20.</p>
   <nav class="tabs" aria-label="Games">
     <a href="#godfall" id="tab-godfall">Godfall</a>
     <a href="#bars" id="tab-bars">Finish the Bar</a>
+    <a href="#trivia" id="tab-trivia">Trivia</a>
   </nav>
 
   <!-- GAME 1: GODFALL -->
@@ -137,6 +141,34 @@ canvas{display:block;width:100%;height:100%}
       </div>
     </div>
   </section>
+  <!-- GAME 3: TRIVIA -->
+  <section class="panel" id="panel-trivia" hidden>
+    <div class="bars" id="trivia">
+      <div class="top"><span id="trCount">Question 1 / 10</span><span id="trScore">0 pts</span></div>
+      <div class="timer"><i id="trTimer"></i></div>
+      <p class="q" id="trQ"></p>
+      <div class="opts" id="trOpts"></div>
+      <p class="fact" id="trFact" aria-live="polite"></p>
+      <div class="overlay" id="trStart">
+        <img class="mascot" src="skull.png" alt="Spiderdagod's crowned skull character">
+        <h2>Spiderdagod Trivia</h2>
+        <p>Ten questions on a career that runs from Buffalo to Shade 45. How well do you know the catalog?</p>
+        <button class="btn" id="trGo" type="button">Start</button>
+        <span class="hint">Tap an answer · or press 1–4</span>
+      </div>
+      <div class="overlay" id="trOver" hidden>
+        <img class="mascot" src="skull.png" alt="">
+        <h2 id="trTitle">Trivia done</h2>
+        <span class="big" id="trFinal">0</span>
+        <p id="trBest">Best: 0</p>
+        <div class="row">
+          <button class="btn" id="trAgain" type="button">Play again</button>
+          <button class="btn ghost" id="trShare" type="button">Copy score</button>
+        </div>
+        <p>Next chapter: “Celebration,” Nov 20. <a href="../">Pre-save on spiderdagod.com</a></p>
+      </div>
+    </div>
+  </section>
   <p class="copybox" id="copyOut" hidden></p>
 </div>
 
@@ -160,6 +192,28 @@ const BARS = [
 ];
 const FINAL_BAR = { line: "This that work, and real work deserves some ___", answer: "celebration", wrong: ["appreciation", "compensation", "recognition"] };
 
+/* ---------- trivia bank: add questions here ----------
+   q: the question, a: the right answer, wrong: three wrong answers, fact: shown after answering. */
+const TRIVIA = [
+  { q: "What city does Spiderdagod rep?", a: "Buffalo, NY", wrong: ["Rochester, NY", "Brooklyn, NY", "Philadelphia, PA"], fact: "Lyrical East Coast rap out of <b>Buffalo, NY</b>." },
+  { q: "“Dreamkillers” (2018) was announced as the first single from which project?", a: "Godfall", wrong: ["Eight Limbs", "Good People Die", "Toxic"], fact: "<b>Godfall</b> was first announced with “Dreamkillers” in 2018. It finally arrives after “Celebration.”" },
+  { q: "Who produced “Dreamkillers”?", a: "Brutal Caesar", wrong: ["Four Limbs", "Sultan Mir", "Kajmir Royale"], fact: "Produced by <b>Brutal Caesar</b>, with vocals by Shayla B." },
+  { q: "Which Griselda MC is on “That Boy Good” (2016)?", a: "Conway the Machine", wrong: ["Westside Gunn", "Benny the Butcher", "Boldy James"], fact: "“That Boy Good” features Keith Murray, <b>Conway</b> and Miilkbone." },
+  { q: "Which Def Squad legend is also on “That Boy Good”?", a: "Keith Murray", wrong: ["Redman", "Erick Sermon", "Method Man"], fact: "<b>Keith Murray</b> joins Conway and Miilkbone on the track." },
+  { q: "Who features on “The Grendel” (2018)?", a: "Recognize Ali", wrong: ["Termanology", "Mickey Factz", "Hus Kingpin"], fact: "“The Grendel” features <b>Recognize Ali</b>, produced by Sultan Mir." },
+  { q: "Which Houston legend is on “God Save the Crown”?", a: "K-Rino", wrong: ["Bun B", "Scarface", "Z-Ro"], fact: "“God Save the Crown” features Nino Bless, <b>K-Rino</b>, Miilkbone and Ness Lee." },
+  { q: "Who features on “Last of the Mob”?", a: "Termanology", wrong: ["Recognize Ali", "Eto", "China Mac"], fact: "“Last of the Mob” features <b>Termanology</b>." },
+  { q: "Which album did Spiderdagod and Struggle Mike release together in 2023?", a: "Good People Die", wrong: ["Da Wall", "Progress", "Ties"], fact: "<b>Good People Die</b> dropped in October 2023, with the “Devil’s Night” video." },
+  { q: "Which group jumped on the “Still Not One” remix?", a: "M.O.P.", wrong: ["Mobb Deep", "Onyx", "Black Moon"], fact: "“Still Not One Remix” features <b>M.O.P.</b>" },
+  { q: "Which Spiderdagod video has the most YouTube views?", a: "Still Not One", wrong: ["Devil’s Night", "Drought", "God Save the Crown"], fact: "<b>“Still Not One”</b> with Struggle Mike has about 45,000 views." },
+  { q: "Spiderdagod’s 2020 album is called…", a: "Eight Limbs", wrong: ["Godfall", "Throne", "All Other Things Yield"], fact: "<b>Eight Limbs</b> came out in May 2020." },
+  { q: "Who produced “Throne”?", a: "Four Limbs", wrong: ["Brutal Caesar", "Roarx the Producer", "Sultan Mir"], fact: "“Throne” was produced by <b>Four Limbs</b>." },
+  { q: "Who features on “Oh Nah” with Struggle Mike and BSF?", a: "China Mac", wrong: ["Eto", "Rick Hyde", "Heem"], fact: "“Oh Nah” features <b>China Mac</b>, and it’s one of Spiderdagod’s most-played songs." },
+  { q: "Which Rochester rapper is on “Drought” with Spiderdagod?", a: "Eto", wrong: ["Termanology", "Ockz", "RJ Payne"], fact: "Struggle Mike’s “Drought” features <b>Eto</b> and Spiderdagod, with about 13,000 views." },
+  { q: "Which Shade 45 show does Spiderdagod hit in November 2026?", a: "The Punchline Academy", wrong: ["Sway in the Morning", "Rap Radar", "Hip Hop Nation"], fact: "<b>The Punchline Academy</b>, hosted by Da Inphamus Amadeuz, Nov 14." },
+];
+const TRIVIA_FINAL = { q: "When does “Celebration” drop?", a: "Nov 20, 2026", wrong: ["Nov 6, 2026", "Dec 18, 2026", "Jan 8, 2027"], fact: "<b>Friday, November 20, 2026.</b> Pre-save opens Nov 6." };
+
 const store = {
   get(k){ try { return Number(localStorage.getItem(k)) || 0; } catch(e){ return 0; } },
   set(k,v){ try { localStorage.setItem(k, String(v)); } catch(e){} }
@@ -175,13 +229,14 @@ function copyText(text, btn){
 
 /* ---------- tabs ---------- */
 function route(){
-  const g = location.hash === "#bars" ? "bars" : "godfall";
-  $("panel-godfall").hidden = g !== "godfall";
-  $("panel-bars").hidden = g !== "bars";
-  $("tab-godfall").setAttribute("aria-current", g === "godfall" ? "page" : "false");
-  $("tab-bars").setAttribute("aria-current", g === "bars" ? "page" : "false");
+  const g = location.hash === "#bars" ? "bars" : location.hash === "#trivia" ? "trivia" : "godfall";
+  for (const k of ["godfall", "bars", "trivia"]){
+    $("panel-" + k).hidden = g !== k;
+    $("tab-" + k).setAttribute("aria-current", g === k ? "page" : "false");
+  }
   if (g === "godfall") { Fall.resize(); } else { Fall.pause(); }
   if (g !== "bars") Bars.stopTimer();
+  if (g !== "trivia") Trivia.stopTimer();
 }
 addEventListener("hashchange", route);
 
@@ -371,7 +426,7 @@ const Bars = (() => {
     const q = deck[i];
     const left = Math.max(0, 1 - (performance.now() - t0) / (SECONDS * 1000));
     if (ok){ right++; pts += 100 + Math.round(left * 50); }
-    document.querySelectorAll(".opt").forEach(b => { b.disabled = true; if (b.textContent === q.answer) b.classList.add("right"); });
+    $("barOpts").querySelectorAll(".opt").forEach(b => { b.disabled = true; if (b.textContent === q.answer) b.classList.add("right"); });
     if (btn && !ok) btn.classList.add("wrong");
     document.querySelector(".blank").textContent = q.answer;
     $("barScore").textContent = pts + " pts";
@@ -386,10 +441,67 @@ const Bars = (() => {
   }
   addEventListener("keydown", e => {
     if ($("panel-bars").hidden || locked) return;
-    const b = document.querySelector('.opt[data-k="' + e.key + '"]'); if (b) b.click();
+    const b = $("barOpts").querySelector('.opt[data-k="' + e.key + '"]'); if (b) b.click();
   });
   $("barsGo").onclick = start; $("barsAgain").onclick = start;
   $("barsShare").onclick = e => copyText("I got " + right + "/" + deck.length + " bars right (" + pts + " pts) on Spiderdagod's Finish the Bar. \"Celebration\" drops Nov 20. spiderdagod.com/play#bars", e.currentTarget);
+  return { stopTimer };
+})();
+
+/* ---------- GAME 3: TRIVIA ---------- */
+const Trivia = (() => {
+  const ROUNDS = 10, SECONDS = 15;
+  let deck = [], i = 0, pts = 0, right = 0, t0 = 0, tick = 0, locked = false;
+  function stopTimer(){ clearInterval(tick); }
+  function start(){
+    deck = shuffle(TRIVIA).slice(0, ROUNDS - 1).concat([TRIVIA_FINAL]);
+    i = 0; pts = 0; right = 0;
+    $("trStart").hidden = true; $("trOver").hidden = true;
+    show();
+  }
+  function show(){
+    const q = deck[i]; locked = false;
+    $("trCount").textContent = "Question " + (i + 1) + " / " + deck.length;
+    $("trScore").textContent = pts + " pts";
+    $("trQ").textContent = q.q; $("trFact").innerHTML = "";
+    const opts = $("trOpts"); opts.innerHTML = "";
+    shuffle([q.a, ...q.wrong]).forEach((w, k) => {
+      const btn = document.createElement("button");
+      btn.type = "button"; btn.className = "opt"; btn.textContent = w; btn.dataset.k = k + 1;
+      btn.onclick = () => pick(btn, w === q.a);
+      opts.append(btn);
+    });
+    t0 = performance.now(); stopTimer();
+    tick = setInterval(() => {
+      const left = Math.max(0, 1 - (performance.now() - t0) / (SECONDS * 1000));
+      $("trTimer").style.width = (left * 100) + "%";
+      if (left <= 0) pick(null, false);
+    }, 50);
+  }
+  function pick(btn, ok){
+    if (locked) return; locked = true; stopTimer();
+    const q = deck[i];
+    const left = Math.max(0, 1 - (performance.now() - t0) / (SECONDS * 1000));
+    if (ok){ right++; pts += 100 + Math.round(left * 50); }
+    $("trOpts").querySelectorAll(".opt").forEach(b => { b.disabled = true; if (b.textContent === q.a) b.classList.add("right"); });
+    if (btn && !ok) btn.classList.add("wrong");
+    $("trFact").innerHTML = q.fact;
+    $("trScore").textContent = pts + " pts";
+    setTimeout(() => { i++; i < deck.length ? show() : end(); }, 2300);
+  }
+  function end(){
+    const best = Math.max(pts, store.get("trivia-best")); store.set("trivia-best", best);
+    $("trTitle").textContent = right === deck.length ? "Day one" : right >= 7 ? "Real fan" : "Study the catalog";
+    $("trFinal").textContent = pts;
+    $("trBest").textContent = right + " of " + deck.length + " right · Best: " + best;
+    $("trOver").hidden = false;
+  }
+  addEventListener("keydown", e => {
+    if ($("panel-trivia").hidden || locked) return;
+    const b = $("trOpts").querySelector('.opt[data-k="' + e.key + '"]'); if (b) b.click();
+  });
+  $("trGo").onclick = start; $("trAgain").onclick = start;
+  $("trShare").onclick = e => copyText("I got " + right + "/" + deck.length + " on Spiderdagod Trivia (" + pts + " pts). \"Celebration\" drops Nov 20. spiderdagod.com/play#trivia", e.currentTarget);
   return { stopTimer };
 })();
 
