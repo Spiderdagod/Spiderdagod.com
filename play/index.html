@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Godfall Arcade</title>
+<meta name="description" content="Two games from Spiderdagod's Godfall world: fall through the dark, or finish the bar. New single &quot;Celebration&quot; out November 20, 2026.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@700;900&family=Archivo:wght@400;600;800&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one narrow arcade column, a tab for each game, the game window sized to the phone. */
+:root{
+  color-scheme:dark;
+  --night:#110e10; --ash:#1b1719; --rule:#2e2729; --bone:#ece4d6; --dust:#a59a8c;
+  --gold:#d1a84e; --blood:#b8443d;
+  --display:"Grenze Gotisch", Georgia, serif;
+  --body:"Archivo", "Helvetica Neue", Arial, sans-serif;
+  --mono:"DM Mono", ui-monospace, Menlo, monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--night);color:var(--bone);font-family:var(--body);font-size:16px;line-height:1.5}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.wrap{max-width:560px;margin:0 auto;padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:16px}
+.back{font-family:var(--mono);font-size:13px;color:var(--dust);text-decoration:none}
+.back:hover{color:var(--bone)}
+h1{margin:0;font-family:var(--display);font-weight:900;font-size:clamp(40px,11vw,60px);line-height:.9}
+h1 span{color:var(--gold)}
+.sub{margin:0;color:var(--dust);font-size:15px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--rule)}
+.tabs a{text-decoration:none;text-align:center;padding:12px 8px;font-weight:800;font-size:14px;letter-spacing:.05em;text-transform:uppercase;color:var(--dust)}
+.tabs a[aria-current="page"]{background:var(--bone);color:var(--night)}
+.panel{display:grid;gap:12px}
+
+/* game window */
+.stage{position:relative;width:100%;height:min(72vh,680px);min-height:420px;border:1px solid var(--rule);background:#0b090a;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+canvas{display:block;width:100%;height:100%}
+.hud{position:absolute;inset:0 0 auto;display:flex;justify-content:space-between;padding:10px 12px;font-family:var(--mono);font-size:13px;color:var(--bone);pointer-events:none;font-variant-numeric:tabular-nums}
+.overlay{position:absolute;inset:0;display:grid;place-content:center;gap:12px;text-align:center;padding:24px;background:rgba(11,9,10,.72)}
+.overlay h2{margin:0;font-family:var(--display);font-weight:900;font-size:44px;line-height:.95}
+.overlay p{margin:0;color:var(--dust);max-width:32ch;justify-self:center}
+.overlay .big{font-family:var(--body);font-weight:800;font-size:40px;color:var(--bone);font-variant-numeric:tabular-nums}
+.btn{justify-self:center;border:1px solid var(--gold);background:var(--gold);color:var(--night);font-weight:800;letter-spacing:.05em;text-transform:uppercase;font-size:14px;padding:13px 20px;cursor:pointer;text-decoration:none}
+.btn.ghost{background:transparent;color:var(--bone);border-color:var(--rule)}
+.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.hint{font-family:var(--mono);font-size:12px;color:var(--dust);text-align:center}
+
+/* finish the bar */
+.bars{position:relative;border:1px solid var(--rule);background:var(--ash);min-height:420px;display:grid;align-content:start;gap:18px;padding:20px}
+.bars .top{display:flex;justify-content:space-between;font-family:var(--mono);font-size:13px;color:var(--dust);font-variant-numeric:tabular-nums}
+.timer{height:4px;background:var(--rule)}
+.timer i{display:block;height:100%;width:100%;background:var(--gold)}
+.line{margin:0;font-family:var(--body);font-weight:600;font-size:clamp(20px,5.2vw,26px);line-height:1.35;min-height:3.6em;text-wrap:balance}
+.line .blank{display:inline-block;min-width:4.5em;border-bottom:2px solid var(--gold);color:var(--gold)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{border:1px solid var(--rule);background:var(--night);padding:14px 10px;font-weight:700;font-size:16px;cursor:pointer;text-align:center}
+.opt:hover:not(:disabled){border-color:var(--bone)}
+.opt.right{border-color:var(--gold);background:var(--gold);color:var(--night)}
+.opt.wrong{border-color:var(--blood);color:var(--blood)}
+.opt:disabled{cursor:default}
+.bars .overlay{background:rgba(27,23,25,.94)}
+.copybox{font-family:var(--mono);font-size:12px;color:var(--dust)}
+@media (prefers-reduced-motion:reduce){.timer i{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../">← spiderdagod.com</a>
+  <h1>Godfall <span>Arcade</span></h1>
+  <p class="sub">Two games from the Godfall world. New single “Celebration” out Nov 20.</p>
+  <nav class="tabs" aria-label="Games">
+    <a href="#godfall" id="tab-godfall">Godfall</a>
+    <a href="#bars" id="tab-bars">Finish the Bar</a>
+  </nav>
+
+  <!-- GAME 1: GODFALL -->
+  <section class="panel" id="panel-godfall">
+    <div class="stage" id="stage">
+      <canvas id="fall" aria-label="Godfall game: steer the falling god through gaps in the stone"></canvas>
+      <div class="hud"><span id="depth">0 m</span><span id="light">Light 0</span></div>
+      <div class="overlay" id="fallStart">
+        <h2>Godfall</h2>
+        <p>Fall through the dark. Slip through the gaps, catch the light, and stay out of the webs.</p>
+        <button class="btn" id="fallGo" type="button">Start falling</button>
+        <span class="hint">Swipe left and right · or use ← → / A D</span>
+      </div>
+      <div class="overlay" id="fallOver" hidden>
+        <h2>Fallen</h2>
+        <span class="big" id="fallScore">0</span>
+        <p id="fallBest">Best: 0</p>
+        <div class="row">
+          <button class="btn" id="fallAgain" type="button">Fall again</button>
+          <button class="btn ghost" id="fallShare" type="button">Copy score</button>
+        </div>
+        <p>“Celebration” drops Nov 20. <a href="../">Pre-save on spiderdagod.com</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- GAME 2: FINISH THE BAR -->
+  <section class="panel" id="panel-bars" hidden>
+    <div class="bars" id="bars">
+      <div class="top"><span id="barCount">Bar 1 / 10</span><span id="barScore">0 pts</span></div>
+      <div class="timer"><i id="barTimer"></i></div>
+      <p class="line" id="barLine"></p>
+      <div class="opts" id="barOpts"></div>
+      <div class="overlay" id="barsStart">
+        <h2>Finish the Bar</h2>
+        <p>Ten bars from “Celebration.” Pick the word that ends each line before the timer runs out.</p>
+        <button class="btn" id="barsGo" type="button">Start</button>
+        <span class="hint">Tap an answer · or press 1–4</span>
+      </div>
+      <div class="overlay" id="barsOver" hidden>
+        <h2 id="barsTitle">Bars finished</h2>
+        <span class="big" id="barsFinal">0</span>
+        <p id="barsBest">Best: 0</p>
+        <div class="row">
+          <button class="btn" id="barsAgain" type="button">Play again</button>
+          <button class="btn ghost" id="barsShare" type="button">Copy score</button>
+        </div>
+        <p>Hear every bar Nov 20. <a href="../">Pre-save on spiderdagod.com</a></p>
+      </div>
+    </div>
+  </section>
+  <p class="copybox" id="copyOut" hidden></p>
+</div>
+
+<script>
+/* ---------- lyric bank: add lines here ----------
+   Each entry: the line with ___ where the missing word goes, the answer, and three wrong choices. */
+const BARS = [
+  { line: "They still accept him, the same heart with the feeling ___", answer: "severed", wrong: ["settled", "measured", "weathered"] },
+  { line: "Expectedly, my trajectory exceeds a mill or ___", answer: "better", wrong: ["never", "forever", "clever"] },
+  { line: "Reminiscing memories that fill me with the simple ___", answer: "pleasures", wrong: ["treasures", "measures", "lessons"] },
+  { line: "Getting cheddar, get an address and we can get ___", answer: "whatever", wrong: ["together", "forever", "wherever"] },
+  { line: "So why can't that upper limit get this same intensive ___", answer: "effort", wrong: ["pressure", "measure", "fervor"] },
+  { line: "Rappers sound like reading receipts from the clearance ___", answer: "sector", wrong: ["section", "center", "rack"] },
+  { line: "All I'm pitching is God offering the city some ___", answer: "growth", wrong: ["hope", "gold", "love"] },
+  { line: "But lately I've been in a space of dividends and interest ___", answer: "rates", wrong: ["gains", "stakes", "trades"] },
+  { line: "Is it about the art that you impart upon the system or the income that it ___?", answer: "generates", wrong: ["creates", "elevates", "demonstrates"] },
+  { line: "Attenuate the distance when I ___", answer: "demonstrate", wrong: ["elevate", "illustrate", "dominate"] },
+  { line: "It was written and I lived it, take a minute to get to witness ___", answer: "fate", wrong: ["faith", "greatness", "grace"] },
+  { line: "I could tell they waiting, I've been selling ___", answer: "elevation", wrong: ["inspiration", "dedication", "motivation"] },
+  { line: "What's the saying? What's understood don't need an ___", answer: "explanation", wrong: ["invitation", "introduction", "education"] },
+];
+const FINAL_BAR = { line: "This that work, and real work deserves some ___", answer: "celebration", wrong: ["appreciation", "compensation", "recognition"] };
+
+const store = {
+  get(k){ try { return Number(localStorage.getItem(k)) || 0; } catch(e){ return 0; } },
+  set(k,v){ try { localStorage.setItem(k, String(v)); } catch(e){} }
+};
+const $ = id => document.getElementById(id);
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+function copyText(text, btn){
+  const done = () => { const t = btn.textContent; btn.textContent = "Copied"; setTimeout(() => btn.textContent = t, 1500); };
+  const show = () => { const o = $("copyOut"); o.textContent = text; o.hidden = false; const r = document.createRange(); r.selectNodeContents(o); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
+  try { navigator.clipboard.writeText(text).then(done, show); } catch(e){ show(); }
+}
+
+/* ---------- tabs ---------- */
+function route(){
+  const g = location.hash === "#bars" ? "bars" : "godfall";
+  $("panel-godfall").hidden = g !== "godfall";
+  $("panel-bars").hidden = g !== "bars";
+  $("tab-godfall").setAttribute("aria-current", g === "godfall" ? "page" : "false");
+  $("tab-bars").setAttribute("aria-current", g === "bars" ? "page" : "false");
+  if (g === "godfall") { Fall.resize(); } else { Fall.pause(); }
+  if (g !== "bars") Bars.stopTimer();
+}
+addEventListener("hashchange", route);
+
+/* ---------- GAME 1: GODFALL ---------- */
+const Fall = (() => {
+  const stage = $("stage"), cv = $("fall"), ctx = cv.getContext("2d");
+  const sprite = new Image(); sprite.src = "godfall-sprite.png";
+  let W = 0, H = 0, running = false, last = 0, raf = 0;
+  let p, ledges, webs, orbs, motes, speed, dist, light, stuck, keyDir, targetX, nextLedgeY;
+
+  function resize(){
+    const r = stage.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2);
+    W = r.width; H = r.height;
+    cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (!running) drawIdle();
+  }
+  function reset(){
+    const R = Math.max(20, Math.min(W, H) * 0.06);
+    p = { x: W / 2, y: H * 0.26, r: R };
+    targetX = p.x; speed = 170; dist = 0; light = 0; stuck = 0; keyDir = 0;
+    ledges = []; webs = []; orbs = [];
+    motes = Array.from({ length: 40 }, () => ({ x: Math.random() * W, y: Math.random() * H, s: 0.2 + Math.random() * 0.8 }));
+    nextLedgeY = H + 40;
+    while (nextLedgeY < H * 2.2) spawnRow();
+  }
+  function gapWidth(){ return Math.max(p.r * 3.1, p.r * 5.2 - dist / 900); }
+  function spawnRow(){
+    const gw = gapWidth(), gx = 10 + Math.random() * (W - gw - 20);
+    ledges.push({ y: nextLedgeY, gx, gw, th: 14 });
+    const between = nextLedgeY + 90;
+    if (Math.random() < 0.6) orbs.push({ x: 20 + Math.random() * (W - 40), y: between, r: 7, taken: false });
+    if (dist > 600 && Math.random() < 0.35) webs.push({ x: 30 + Math.random() * (W - 60), y: between + 30, r: 30 });
+    nextLedgeY += Math.max(150, 220 - dist / 120) + Math.random() * 40;
+  }
+  function hitRect(cx, cy, r, x, y, w, h){
+    const nx = Math.max(x, Math.min(cx, x + w)), ny = Math.max(y, Math.min(cy, y + h));
+    return (cx - nx) ** 2 + (cy - ny) ** 2 < r * r;
+  }
+  function step(dt){
+    speed = Math.min(560, speed + dt * 7);
+    const dy = speed * dt; dist += dy;
+    const control = stuck > 0 ? 0.3 : 1; stuck = Math.max(0, stuck - dt);
+    if (keyDir) targetX += keyDir * 420 * dt;
+    const edge = p.r * 1.5;
+    targetX = Math.max(edge, Math.min(W - edge, targetX));
+    p.x += (targetX - p.x) * Math.min(1, dt * 12 * control);
+    for (const m of motes){ m.y -= dy * m.s * 0.5; if (m.y < -4){ m.y = H + 4; m.x = Math.random() * W; } }
+    for (const L of ledges) L.y -= dy;
+    for (const o of orbs) o.y -= dy;
+    for (const w of webs) w.y -= dy;
+    nextLedgeY -= dy;
+    while (nextLedgeY < H * 2.2) spawnRow();
+    ledges = ledges.filter(L => L.y > -40); orbs = orbs.filter(o => o.y > -20 && !o.taken); webs = webs.filter(w => w.y > -40);
+    const hr = p.r * 0.72;
+    for (const L of ledges){
+      if (hitRect(p.x, p.y, hr, 0, L.y, L.gx, L.th) || hitRect(p.x, p.y, hr, L.gx + L.gw, L.y, W - L.gx - L.gw, L.th)) return over();
+    }
+    for (const o of orbs) if ((o.x - p.x) ** 2 + (o.y - p.y) ** 2 < (o.r + p.r) ** 2){ o.taken = true; light++; }
+    for (const w of webs) if ((w.x - p.x) ** 2 + (w.y - p.y) ** 2 < (w.r + hr * 0.6) ** 2) stuck = 1.1;
+    $("depth").textContent = Math.floor(dist / 40) + " m";
+    $("light").textContent = "Light " + light;
+  }
+  function score(){ return Math.floor(dist / 40) + light * 25; }
+  function draw(){
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, "#1a1517"); g.addColorStop(1, "#070606");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "rgba(236,228,214,.35)";
+    for (const m of motes){ ctx.globalAlpha = m.s * 0.5; ctx.fillRect(m.x, m.y, 1.5, 1.5 + m.s * 4); }
+    ctx.globalAlpha = 1;
+    for (const w of webs){
+      ctx.strokeStyle = "rgba(236,228,214,.38)"; ctx.lineWidth = 1;
+      for (let i = 0; i < 8; i++){ const a = i / 8 * Math.PI * 2; ctx.beginPath(); ctx.moveTo(w.x, w.y); ctx.lineTo(w.x + Math.cos(a) * w.r, w.y + Math.sin(a) * w.r); ctx.stroke(); }
+      for (let k = 1; k <= 3; k++){ ctx.beginPath(); for (let i = 0; i <= 8; i++){ const a = i / 8 * Math.PI * 2, rr = w.r * k / 3.3; const x = w.x + Math.cos(a) * rr, y = w.y + Math.sin(a) * rr; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke(); }
+    }
+    for (const o of orbs){
+      const rg = ctx.createRadialGradient(o.x, o.y, 0, o.x, o.y, o.r * 3);
+      rg.addColorStop(0, "rgba(255,226,150,1)"); rg.addColorStop(.35, "rgba(209,168,78,.65)"); rg.addColorStop(1, "rgba(209,168,78,0)");
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(o.x, o.y, o.r * 3, 0, Math.PI * 2); ctx.fill();
+    }
+    for (const L of ledges){
+      ctx.fillStyle = "#2b2426";
+      ctx.fillRect(0, L.y, L.gx, L.th); ctx.fillRect(L.gx + L.gw, L.y, W - L.gx - L.gw, L.th);
+      ctx.fillStyle = "#d1a84e";
+      ctx.fillRect(0, L.y, L.gx, 2); ctx.fillRect(L.gx + L.gw, L.y, W - L.gx - L.gw, 2);
+    }
+    const s = p.r * 3.4;
+    if (stuck > 0){ ctx.globalAlpha = .55; }
+    if (sprite.complete && sprite.naturalWidth) ctx.drawImage(sprite, p.x - s / 2, p.y - s / 2, s, s);
+    else { ctx.fillStyle = "#ece4d6"; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill(); }
+    ctx.globalAlpha = 1;
+  }
+  function drawIdle(){ if (!p) reset(); draw(); }
+  function loop(t){
+    if (!running) return;
+    const dt = Math.min(0.033, (t - last) / 1000 || 0); last = t;
+    step(dt); if (running) draw();
+    raf = requestAnimationFrame(loop);
+  }
+  function start(){
+    resize(); reset(); running = true; $("fallStart").hidden = true; $("fallOver").hidden = true;
+    last = performance.now(); raf = requestAnimationFrame(loop);
+  }
+  function over(){
+    running = false; cancelAnimationFrame(raf); draw();
+    const sc = score(), best = Math.max(sc, store.get("godfall-best")); store.set("godfall-best", best);
+    $("fallScore").textContent = sc; $("fallBest").textContent = "Best: " + best + " · " + Math.floor(dist / 40) + " m down, " + light + " light caught";
+    $("fallOver").hidden = false;
+  }
+  function pause(){ if (running){ running = false; cancelAnimationFrame(raf); $("fallStart").hidden = false; $("fallGo").textContent = "Start again"; } }
+
+  // controls: drag anywhere on the stage, or keys
+  let dragX = null, dragStart = 0;
+  stage.addEventListener("pointerdown", e => { if (!running) return; dragX = e.clientX; dragStart = targetX; stage.setPointerCapture(e.pointerId); });
+  stage.addEventListener("pointermove", e => { if (dragX === null) return; targetX = dragStart + (e.clientX - dragX) * 1.25; });
+  const endDrag = () => { dragX = null; };
+  stage.addEventListener("pointerup", endDrag); stage.addEventListener("pointercancel", endDrag);
+  addEventListener("keydown", e => {
+    if ($("panel-godfall").hidden) return;
+    if (["ArrowLeft","a","A"].includes(e.key)){ keyDir = -1; e.preventDefault(); }
+    if (["ArrowRight","d","D"].includes(e.key)){ keyDir = 1; e.preventDefault(); }
+    if ((e.key === " " || e.key === "Enter") && !running && document.activeElement.tagName !== "BUTTON"){ start(); e.preventDefault(); }
+  });
+  addEventListener("keyup", e => { if (["ArrowLeft","a","A","ArrowRight","d","D"].includes(e.key)) keyDir = 0; });
+  document.addEventListener("visibilitychange", () => { if (document.hidden) pause(); });
+  addEventListener("resize", () => { if (!$("panel-godfall").hidden) resize(); });
+  sprite.onload = () => { if (!running) drawIdle(); };
+  $("fallGo").onclick = start; $("fallAgain").onclick = start;
+  $("fallShare").onclick = e => copyText("I fell " + Math.floor(dist / 40) + " m and scored " + score() + " in Godfall. Spiderdagod's \"Celebration\" drops Nov 20. spiderdagod.com/play", e.currentTarget);
+  return { resize, pause };
+})();
+
+/* ---------- GAME 2: FINISH THE BAR ---------- */
+const Bars = (() => {
+  const ROUNDS = 10, SECONDS = 10;
+  let deck = [], i = 0, pts = 0, right = 0, t0 = 0, tick = 0, locked = false;
+  function stopTimer(){ clearInterval(tick); }
+  function start(){
+    deck = shuffle(BARS).slice(0, ROUNDS - 1).concat([FINAL_BAR]);
+    i = 0; pts = 0; right = 0;
+    $("barsStart").hidden = true; $("barsOver").hidden = true;
+    show();
+  }
+  function show(){
+    const q = deck[i]; locked = false;
+    $("barCount").textContent = "Bar " + (i + 1) + " / " + deck.length;
+    $("barScore").textContent = pts + " pts";
+    const [a, b] = q.line.split("___");
+    $("barLine").innerHTML = "";
+    $("barLine").append(a, Object.assign(document.createElement("span"), { className: "blank", textContent: " " }), b || "");
+    const opts = $("barOpts"); opts.innerHTML = "";
+    shuffle([q.answer, ...q.wrong]).forEach((w, k) => {
+      const btn = document.createElement("button");
+      btn.type = "button"; btn.className = "opt"; btn.textContent = w; btn.dataset.k = k + 1;
+      btn.onclick = () => pick(btn, w === q.answer);
+      opts.append(btn);
+    });
+    t0 = performance.now(); stopTimer();
+    tick = setInterval(() => {
+      const left = Math.max(0, 1 - (performance.now() - t0) / (SECONDS * 1000));
+      $("barTimer").style.width = (left * 100) + "%";
+      if (left <= 0) pick(null, false);
+    }, 50);
+  }
+  function pick(btn, ok){
+    if (locked) return; locked = true; stopTimer();
+    const q = deck[i];
+    const left = Math.max(0, 1 - (performance.now() - t0) / (SECONDS * 1000));
+    if (ok){ right++; pts += 100 + Math.round(left * 50); }
+    document.querySelectorAll(".opt").forEach(b => { b.disabled = true; if (b.textContent === q.answer) b.classList.add("right"); });
+    if (btn && !ok) btn.classList.add("wrong");
+    document.querySelector(".blank").textContent = q.answer;
+    $("barScore").textContent = pts + " pts";
+    setTimeout(() => { i++; i < deck.length ? show() : end(); }, 1100);
+  }
+  function end(){
+    const best = Math.max(pts, store.get("bars-best")); store.set("bars-best", best);
+    $("barsTitle").textContent = right === deck.length ? "Every bar" : right >= 7 ? "Real one" : "Run it back";
+    $("barsFinal").textContent = pts;
+    $("barsBest").textContent = right + " of " + deck.length + " right · Best: " + best;
+    $("barsOver").hidden = false;
+  }
+  addEventListener("keydown", e => {
+    if ($("panel-bars").hidden || locked) return;
+    const b = document.querySelector('.opt[data-k="' + e.key + '"]'); if (b) b.click();
+  });
+  $("barsGo").onclick = start; $("barsAgain").onclick = start;
+  $("barsShare").onclick = e => copyText("I got " + right + "/" + deck.length + " bars right (" + pts + " pts) on Spiderdagod's Finish the Bar. \"Celebration\" drops Nov 20. spiderdagod.com/play#bars", e.currentTarget);
+  return { stopTimer };
+})();
+
+route();
+</script>
+</body>
+</html>
