@@ -6,6 +6,8 @@
 <title>Godfall Arcade</title>
 <meta name="description" content="Two games from Spiderdagod's Godfall world: fall through the dark, or finish the bar. New single &quot;Celebration&quot; out November 20, 2026.">
 <meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@700;900&family=Archivo:wght@400;600;800&family=DM+Mono:wght@400;500&display=swap">
 <style>
@@ -47,6 +49,10 @@ canvas{display:block;width:100%;height:100%}
 .btn.ghost{background:transparent;color:var(--bone);border-color:var(--rule)}
 .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .hint{font-family:var(--mono);font-size:12px;color:var(--dust);text-align:center}
+.skin{display:grid;justify-items:center;gap:6px;width:108px;padding:10px 8px;border:1px solid var(--rule);background:var(--night);font-family:var(--mono);font-size:12px;color:var(--dust);cursor:pointer}
+.skin img{height:58px;width:auto}
+.skin[aria-pressed="true"]{border-color:var(--gold);color:var(--bone)}
+.mascot{height:120px;width:auto;justify-self:center}
 
 /* finish the bar */
 .bars{position:relative;border:1px solid var(--rule);background:var(--ash);min-height:420px;display:grid;align-content:start;gap:18px;padding:20px}
@@ -84,6 +90,10 @@ canvas{display:block;width:100%;height:100%}
       <div class="overlay" id="fallStart">
         <h2>Godfall</h2>
         <p>Fall through the dark. Slip through the gaps, catch the light, and stay out of the webs.</p>
+        <div class="row" role="group" aria-label="Choose who falls">
+          <button class="skin" type="button" data-skin="god" aria-pressed="true"><img src="godfall-sprite.png" alt="">The god</button>
+          <button class="skin" type="button" data-skin="skull" aria-pressed="false"><img src="skull.png" alt="">The skull</button>
+        </div>
         <button class="btn" id="fallGo" type="button">Start falling</button>
         <span class="hint">Swipe left and right · or use ← → / A D</span>
       </div>
@@ -108,12 +118,14 @@ canvas{display:block;width:100%;height:100%}
       <p class="line" id="barLine"></p>
       <div class="opts" id="barOpts"></div>
       <div class="overlay" id="barsStart">
+        <img class="mascot" src="skull.png" alt="Spiderdagod's crowned skull character">
         <h2>Finish the Bar</h2>
         <p>Ten bars from “Celebration.” Pick the word that ends each line before the timer runs out.</p>
         <button class="btn" id="barsGo" type="button">Start</button>
         <span class="hint">Tap an answer · or press 1–4</span>
       </div>
       <div class="overlay" id="barsOver" hidden>
+        <img class="mascot" src="skull.png" alt="">
         <h2 id="barsTitle">Bars finished</h2>
         <span class="big" id="barsFinal">0</span>
         <p id="barsBest">Best: 0</p>
@@ -177,6 +189,16 @@ addEventListener("hashchange", route);
 const Fall = (() => {
   const stage = $("stage"), cv = $("fall"), ctx = cv.getContext("2d");
   const sprite = new Image(); sprite.src = "godfall-sprite.png";
+  const skull = new Image(); skull.src = "skull.png";
+  let skin = "god";
+  try { if (localStorage.getItem("godfall-skin") === "skull") skin = "skull"; } catch(e){}
+  function setSkin(s){
+    skin = s;
+    document.querySelectorAll(".skin").forEach(b => b.setAttribute("aria-pressed", b.dataset.skin === s ? "true" : "false"));
+    try { localStorage.setItem("godfall-skin", s); } catch(e){}
+    if (!running) drawIdle();
+  }
+  document.querySelectorAll(".skin").forEach(b => b.addEventListener("click", () => setSkin(b.dataset.skin)));
   let W = 0, H = 0, running = false, last = 0, raf = 0;
   let p, ledges, webs, orbs, motes, speed, dist, light, stuck, keyDir, targetX, nextLedgeY;
 
@@ -256,13 +278,21 @@ const Fall = (() => {
       ctx.fillStyle = "#d1a84e";
       ctx.fillRect(0, L.y, L.gx, 2); ctx.fillRect(L.gx + L.gw, L.y, W - L.gx - L.gw, 2);
     }
-    const s = p.r * 3.4;
+    const s = p.r * 3.4, tilt = Math.max(-0.5, Math.min(0.5, (targetX - p.x) / 120));
     if (stuck > 0){ ctx.globalAlpha = .55; }
-    if (sprite.complete && sprite.naturalWidth) ctx.drawImage(sprite, p.x - s / 2, p.y - s / 2, s, s);
-    else { ctx.fillStyle = "#ece4d6"; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill(); }
+    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(tilt);
+    if (skin === "skull" && skull.complete && skull.naturalWidth){
+      const sh = p.r * 3.6, sw = sh * skull.naturalWidth / skull.naturalHeight;
+      const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, sh * 0.7);
+      glow.addColorStop(0, "rgba(236,228,214,.28)"); glow.addColorStop(1, "rgba(236,228,214,0)");
+      ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(0, 0, sh * 0.7, 0, Math.PI * 2); ctx.fill();
+      ctx.drawImage(skull, -sw / 2, -sh * 0.42, sw, sh);
+    } else if (sprite.complete && sprite.naturalWidth) ctx.drawImage(sprite, -s / 2, -s / 2, s, s);
+    else { ctx.fillStyle = "#ece4d6"; ctx.beginPath(); ctx.arc(0, 0, p.r, 0, Math.PI * 2); ctx.fill(); }
+    ctx.restore();
     ctx.globalAlpha = 1;
   }
-  function drawIdle(){ if (!p) reset(); draw(); }
+  function drawIdle(){ if (!W || !H) return; if (!p) reset(); draw(); }
   function loop(t){
     if (!running) return;
     const dt = Math.min(0.033, (t - last) / 1000 || 0); last = t;
@@ -299,6 +329,8 @@ const Fall = (() => {
   sprite.onload = () => { if (!running) drawIdle(); };
   $("fallGo").onclick = start; $("fallAgain").onclick = start;
   $("fallShare").onclick = e => copyText("I fell " + Math.floor(dist / 40) + " m and scored " + score() + " in Godfall. Spiderdagod's \"Celebration\" drops Nov 20. spiderdagod.com/play", e.currentTarget);
+  skull.onload = () => { if (!running) drawIdle(); };
+  setSkin(skin);
   return { resize, pause };
 })();
 
