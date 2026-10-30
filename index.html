@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Spiderdagod, lyrical rap out of Buffalo, NY. New single &quot;Celebration&quot; out November 20, 2026, from the EP Godfall.">
+<title>Spiderdagod</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@500;700;900&family=Archivo:wght@400;500;700;800&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one dark Godfall world. A web drawn behind the hero, a single long column of chapters, gold used only for what's new. */
+:root{
+  color-scheme:dark;
+  --night:#110e10; --ash:#1b1719; --rule:#2e2729; --bone:#ece4d6; --dust:#a59a8c;
+  --gold:#d1a84e; --blood:#9b2f2a;
+  --display:"Grenze Gotisch", "UnifrakturCook", Georgia, serif;
+  --body:"Archivo", "Helvetica Neue", Arial, sans-serif;
+  --mono:"DM Mono", ui-monospace, Menlo, monospace;
+  --col:1080px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--night);color:var(--bone);font-family:var(--body);font-size:16px;line-height:1.6}
+a{color:inherit}
+a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.wrap{max-width:var(--col);margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--dust)}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,54px);line-height:1;margin:0;text-wrap:balance;color:var(--bone)}
+p{margin:0}
+
+/* hero */
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--rule)}
+#web{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.hero .wrap{position:relative;padding-block:56px 64px;display:grid;gap:28px}
+.top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}
+.mark{font-family:var(--display);font-weight:900;font-size:clamp(56px,13vw,148px);line-height:.85;letter-spacing:.005em;margin:0;color:var(--bone)}
+.mark span{color:var(--gold)}
+.release{display:grid;gap:14px;max-width:640px}
+.release h1{margin:0;font-family:var(--body);font-weight:800;font-size:clamp(26px,4.4vw,40px);line-height:1.1;text-wrap:balance}
+.release h1 em{font-style:normal;color:var(--gold)}
+.release p{color:var(--dust);max-width:56ch}
+.count{display:flex;gap:10px;flex-wrap:wrap;font-family:var(--mono)}
+.count div{border:1px solid var(--rule);background:color-mix(in srgb,var(--ash) 85%,transparent);padding:10px 14px;min-width:78px}
+.count b{display:block;font-family:var(--body);font-weight:800;font-size:30px;line-height:1;font-variant-numeric:tabular-nums;color:var(--bone)}
+.count small{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dust)}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:8px;font:700 14px/1 var(--body);letter-spacing:.04em;text-transform:uppercase;text-decoration:none;padding:14px 18px;border:1px solid var(--bone);color:var(--bone);background:transparent}
+.btn.primary{background:var(--gold);border-color:var(--gold);color:var(--night)}
+.btn[aria-disabled="true"]{opacity:.55;cursor:default}
+.btn:hover:not([aria-disabled="true"]){filter:brightness(1.12)}
+
+/* bands */
+section{border-bottom:1px solid var(--rule)}
+section .wrap{padding-block:64px;display:grid;gap:28px}
+.quote{background:var(--ash)}
+.quote blockquote{margin:0;font-family:var(--display);font-weight:500;font-size:clamp(30px,5.4vw,58px);line-height:1.08;text-wrap:balance;max-width:20ch}
+.quote blockquote span{color:var(--gold)}
+.quote cite{font-style:normal;font-family:var(--mono);font-size:13px;color:var(--dust)}
+
+.story{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:40px;align-items:start}
+.story p{color:var(--bone);max-width:58ch}
+.story p+p{margin-top:14px}
+.story .muted{color:var(--dust)}
+.timeline{list-style:none;margin:0;padding:0;border-left:1px solid var(--rule)}
+.timeline li{display:grid;grid-template-columns:64px minmax(0,1fr);gap:14px;padding:10px 0 10px 18px;position:relative}
+.timeline li::before{content:"";position:absolute;left:-4px;top:19px;width:7px;height:7px;background:var(--dust);transform:rotate(45deg)}
+.timeline li.now::before{background:var(--gold)}
+.timeline .yr{font-family:var(--mono);font-size:13px;color:var(--dust);font-variant-numeric:tabular-nums;padding-top:2px}
+.timeline b{font-weight:700}
+.timeline li.now b{color:var(--gold)}
+.timeline span{display:block;color:var(--dust);font-size:14px}
+
+.air{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.air article{background:var(--night);padding:22px;display:grid;gap:6px;align-content:start}
+.air .date{font-family:var(--mono);font-size:13px;color:var(--gold)}
+.air h3{margin:0;font-size:20px;font-weight:800}
+.air p{color:var(--dust);font-size:14px}
+
+.vids{list-style:none;margin:0;padding:0;display:grid}
+.vids li{border-top:1px solid var(--rule)}
+.vids li:last-child{border-bottom:1px solid var(--rule)}
+.vids a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:baseline;padding:16px 0;text-decoration:none}
+.vids a:hover .t{color:var(--gold)}
+.vids .t{font-weight:700;font-size:18px}
+.vids .c{display:block;color:var(--dust);font-size:13px;font-weight:400}
+.vids .v{font-family:var(--mono);font-size:14px;color:var(--dust);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.names{display:flex;flex-wrap:wrap;gap:6px 22px;font-family:var(--display);font-weight:500;font-size:clamp(22px,3.4vw,32px);line-height:1.25;color:var(--dust)}
+.names b{font-weight:700;color:var(--bone)}
+
+.tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.tier{border:1px solid var(--rule);padding:22px;display:grid;gap:8px;align-content:start}
+.tier.top{border-color:var(--gold)}
+.tier h3{margin:0;font-size:18px;font-weight:800}
+.tier p{color:var(--dust);font-size:14px}
+.booking{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;color:var(--dust)}
+.placeholder{font-family:var(--mono);font-size:13px;border:1px dashed var(--blood);color:var(--bone);padding:8px 12px}
+
+footer .wrap{padding-block:40px 56px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:18px;align-items:center}
+.links{display:flex;flex-wrap:wrap;gap:8px 20px;font-family:var(--mono);font-size:13px}
+.links a{color:var(--dust);text-decoration:none;border-bottom:1px solid var(--rule)}
+.links a:hover{color:var(--bone);border-color:var(--gold)}
+.fine{font-family:var(--mono);font-size:12px;color:var(--dust)}
+
+@media (max-width:760px){
+  .story,.air,.tiers{grid-template-columns:minmax(0,1fr)}
+  .hero .wrap{padding-block:40px 48px}
+  section .wrap{padding-block:48px}
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <canvas id="web" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="top">
+      <span class="eyebrow">Buffalo, NY</span>
+      <span class="eyebrow">From the EP Godfall</span>
+    </div>
+    <p class="mark">Spider<span>da</span>god</p>
+    <div class="release">
+      <h1>New single <em>“Celebration”</em> out Friday, November 20, 2026</h1>
+      <p>The first solo single since <i>Good People Die</i>, and the first look at <i>Godfall</i>, the project first announced in 2018.</p>
+      <div class="count" id="count" aria-live="polite">
+        <div><b id="d">--</b><small>Days</small></div>
+        <div><b id="h">--</b><small>Hours</small></div>
+        <div><b id="m">--</b><small>Minutes</small></div>
+      </div>
+      <div class="actions">
+        <a class="btn primary" id="presave" aria-disabled="true" role="link">Pre-save opens Nov 6</a>
+        <a class="btn" href="https://www.youtube.com/watch?v=w7VlIhIySJs" target="_blank" rel="noopener">Watch “Still Not One”</a>
+        <a class="btn" href="https://music.apple.com/us/artist/spiderdagod/580326338" target="_blank" rel="noopener">Apple Music</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="quote">
+  <div class="wrap">
+    <blockquote>This that work, and real work deserves some <span>celebration.</span></blockquote>
+    <cite>“Celebration,” the hook</cite>
+  </div>
+</section>
+
+<section id="story">
+  <div class="wrap story">
+    <div style="display:grid;gap:18px">
+      <span class="eyebrow">The road to Godfall</span>
+      <h2>2018: “Dreamkillers.” 2026: “Celebration.”</h2>
+      <p>“Dreamkillers” was the first single from a project called <i>Godfall</i>. It was about the people closest to you who try to kill the dream.</p>
+      <p>Eight years, two albums and a run of features later, “Celebration” is the payoff: growth, business, and work that finally paid off.</p>
+      <p class="muted">Lyrical East Coast rap out of Buffalo, on records with Conway, Keith Murray, M.O.P., Termanology and K-Rino.</p>
+    </div>
+    <ol class="timeline">
+      <li><span class="yr">2016</span><div><b>God Save the Crown</b><span>with Nino Bless, K-Rino, Miilkbone, Ness Lee</span></div></li>
+      <li><span class="yr">2018</span><div><b>Dreamkillers</b><span>First single from <i>Godfall</i></span></div></li>
+      <li><span class="yr">2018</span><div><b>The Grendel</b><span>with Recognize Ali</span></div></li>
+      <li><span class="yr">2020</span><div><b>Eight Limbs</b><span>Album</span></div></li>
+      <li><span class="yr">2022</span><div><b>Toxic</b><span>EP</span></div></li>
+      <li><span class="yr">2023</span><div><b>Good People Die</b><span>Album with Struggle Mike</span></div></li>
+      <li class="now"><span class="yr">2026</span><div><b>Celebration</b><span>Single, out Nov 20 · <i>Godfall</i> to follow</span></div></li>
+    </ol>
+  </div>
+</section>
+
+<section id="air">
+  <div class="wrap">
+    <span class="eyebrow">On air this month</span>
+    <div class="air">
+      <article><span class="date">Nov 7–8</span><h3>BlockWork TV</h3><p>Interview episode goes live the weekend of the announcement.</p></article>
+      <article><span class="date">Sat, Nov 14</span><h3>The Punchline Academy</h3><p>Shade 45 on SiriusXM, hosted by Da Inphamus Amadeuz.</p></article>
+      <article><span class="date">Sat, Nov 28</span><h3>Chopsound</h3><p>Talking “Celebration” the week after release.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="watch">
+  <div class="wrap">
+    <span class="eyebrow">Watch</span>
+    <h2>Most watched</h2>
+    <ul class="vids">
+      <li><a href="https://www.youtube.com/watch?v=w7VlIhIySJs" target="_blank" rel="noopener"><span class="t">Still Not One<span class="c">Struggle Mike x Spiderdagod · PaperChaserDotCom</span></span><span class="v">45K views</span></a></li>
+      <li><a href="https://youtube.com/playlist?list=PLO2jATkKPuozajN3eS0fgNH-Z_4VuC9eZ" target="_blank" rel="noopener"><span class="t">Drought<span class="c">Struggle Mike (BSF) ft. Eto x Spiderdagod · PaperChaserDotCom</span></span><span class="v">13K views</span></a></li>
+      <li><a href="https://youtube.com/playlist?list=PLO2jATkKPuozajN3eS0fgNH-Z_4VuC9eZ" target="_blank" rel="noopener"><span class="t">Devil’s Night<span class="c">Spiderdagod x Struggle Mike · PaperChaserDotCom</span></span><span class="v">5.4K views</span></a></li>
+      <li><a href="https://youtube.com/playlist?list=PLO2jATkKPuozajN3eS0fgNH-Z_4VuC9eZ" target="_blank" rel="noopener"><span class="t">God Save the Crown<span class="c">ft. Nino Bless, K-Rino</span></span><span class="v">3.9K views</span></a></li>
+      <li><a href="https://youtube.com/playlist?list=PLO2jATkKPuozajN3eS0fgNH-Z_4VuC9eZ" target="_blank" rel="noopener"><span class="t">All 28 videos<span class="c">The full Spiderdagod playlist on YouTube</span></span><span class="v">Playlist</span></a></li>
+    </ul>
+  </div>
+</section>
+
+<section id="with">
+  <div class="wrap">
+    <span class="eyebrow">On records with</span>
+    <p class="names"><b>Conway the Machine</b> <b>Keith Murray</b> <b>M.O.P.</b> <b>Termanology</b> <b>K-Rino</b> Nino Bless · Recognize Ali · Mickey Factz · China Mac · Eto · Hus Kingpin · RJ Payne · Struggle Mike · Ockz · Blaze Merch</p>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <span class="eyebrow">Features</span>
+    <h2>Book a verse</h2>
+    <div class="tiers">
+      <div class="tier"><h3>Verse</h3><p>A 16 written and recorded for your track, delivered as clean and explicit stems.</p></div>
+      <div class="tier"><h3>Verse and promo</h3><p>The verse, plus a post sharing your release across Spiderdagod’s pages.</p></div>
+      <div class="tier top"><h3>Verse and video</h3><p>The verse, plus an appearance in your music video.</p></div>
+    </div>
+    <div class="booking">
+      <span>Rates on request. Half upfront, credited as “feat. Spiderdagod.”</span>
+      <span class="placeholder">Booking contact goes here</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <nav class="links" aria-label="Spiderdagod elsewhere">
+      <a href="https://music.apple.com/us/artist/spiderdagod/580326338" target="_blank" rel="noopener">Apple Music</a>
+      <a href="https://youtube.com/playlist?list=PLO2jATkKPuozajN3eS0fgNH-Z_4VuC9eZ" target="_blank" rel="noopener">YouTube</a>
+      <a href="https://spiderdagod.bandcamp.com" target="_blank" rel="noopener">Bandcamp</a>
+      <a href="http://twitter.com/spiderdagod" target="_blank" rel="noopener">X / Twitter</a>
+      <a href="http://facebook.com/therealspiderdagod" target="_blank" rel="noopener">Facebook</a>
+    </nav>
+    <span class="fine">Spiderdagod · Buffalo, NY · Distributed by Lobel Music Group</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // countdown to midnight ET, Nov 20 2026
+  const target = Date.parse("2026-11-20T00:00:00-05:00");
+  const pad = n => String(n).padStart(2,"0");
+  function tick(){
+    const ms = target - Date.now();
+    const box = document.getElementById("count");
+    if(ms <= 0){ box.innerHTML = '<div><b>Out now</b><small>Celebration</small></div>'; return; }
+    const d = Math.floor(ms/864e5), h = Math.floor(ms/36e5)%24, m = Math.floor(ms/6e4)%60;
+    document.getElementById("d").textContent = d;
+    document.getElementById("h").textContent = pad(h);
+    document.getElementById("m").textContent = pad(m);
+  }
+  tick(); setInterval(tick, 30000);
+
+  // the web: a static orb web anchored to the top right of the hero
+  const c = document.getElementById("web"), ctx = c.getContext("2d");
+  function draw(){
+    const r = c.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    c.width = r.width*dpr; c.height = r.height*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,r.width,r.height);
+    const gold = getComputedStyle(document.documentElement).getPropertyValue("--gold").trim() || "#d1a84e";
+    const cx = r.width*0.86, cy = r.height*0.18, R = Math.max(r.width,r.height)*0.9, spokes = 16;
+    const ang = Array.from({length:spokes},(_,i)=> i/spokes*Math.PI*2 + (i%3)*0.03);
+    ctx.strokeStyle = gold; ctx.lineWidth = 1;
+    ctx.globalAlpha = .16;
+    ang.forEach(a=>{ ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(a)*R, cy+Math.sin(a)*R); ctx.stroke(); });
+    ctx.globalAlpha = .12;
+    for(let k=1;k<=22;k++){
+      const rad = 14 + k*k*2.2 + k*18;
+      ctx.beginPath();
+      for(let i=0;i<=spokes;i++){
+        const a0 = ang[i%spokes], a1 = ang[(i+1)%spokes] + (i+1===spokes?Math.PI*2:0);
+        const x0 = cx+Math.cos(a0)*rad, y0 = cy+Math.sin(a0)*rad;
+        const x1 = cx+Math.cos(a1)*rad, y1 = cy+Math.sin(a1)*rad;
+        const am = (a0+a1)/2, sag = rad*0.9;
+        const mx = cx+Math.cos(am)*sag, my = cy+Math.sin(am)*sag;
+        if(i===0) ctx.moveTo(x0,y0);
+        if(i<spokes) ctx.quadraticCurveTo(mx,my,x1,y1);
+      }
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+  draw(); addEventListener("resize", draw);
+})();
+</script>
+</body>
+</html>
