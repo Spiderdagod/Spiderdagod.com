@@ -97,7 +97,13 @@ section .wrap{padding-block:64px;display:grid;gap:28px}
 .tier h3{margin:0;font-size:18px;font-weight:800}
 .tier p{color:var(--dust);font-size:14px}
 .booking{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;color:var(--dust)}
-.placeholder{font-family:var(--mono);font-size:13px;border:1px dashed var(--blood);color:var(--bone);padding:8px 12px}
+.price{font-family:var(--body);font-weight:800;font-size:30px;line-height:1.1;color:var(--bone)!important;font-variant-numeric:tabular-nums}
+.price small{font-size:14px;font-weight:500;color:var(--dust)}
+.addon{color:var(--gold)!important}
+.mail{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px;font-family:var(--mono);font-size:13px!important}
+.mail a{color:var(--bone);overflow-wrap:anywhere}
+.copy{font:500 12px/1 var(--mono);background:transparent;color:var(--dust);border:1px solid var(--rule);padding:6px 9px;cursor:pointer}
+.copy:hover{color:var(--bone);border-color:var(--gold)}
 
 footer .wrap{padding-block:40px 56px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:18px;align-items:center}
 .links{display:flex;flex-wrap:wrap;gap:8px 20px;font-family:var(--mono);font-size:13px}
@@ -202,19 +208,32 @@ footer .wrap{padding-block:40px 56px;display:flex;flex-wrap:wrap;justify-content
   </div>
 </section>
 
-<section id="features">
+<section id="book">
   <div class="wrap">
-    <span class="eyebrow">Features</span>
-    <h2>Book a verse</h2>
+    <span class="eyebrow">Book</span>
+    <h2>Shows, features and media</h2>
     <div class="tiers">
-      <div class="tier"><h3>Verse</h3><p>A 16 written and recorded for your track, delivered as clean and explicit stems.</p></div>
-      <div class="tier"><h3>Verse and promo</h3><p>The verse, plus a post sharing your release across Spiderdagod’s pages.</p></div>
-      <div class="tier top"><h3>Verse and video</h3><p>The verse, plus an appearance in your music video.</p></div>
+      <div class="tier">
+        <h3>Shows</h3>
+        <p class="price">$500</p>
+        <p>Live performance. Travel outside Buffalo quoted separately.</p>
+        <p class="mail"><a href="mailto:booking@spiderdagod.com">booking@spiderdagod.com</a><button type="button" class="copy" data-copy="booking@spiderdagod.com">Copy</button></p>
+      </div>
+      <div class="tier top">
+        <h3>Features</h3>
+        <p class="price">$500 <small>per verse</small></p>
+        <p>A verse written and recorded for your track, delivered as clean and explicit stems, credited as “feat. Spiderdagod.”</p>
+        <p class="addon">Video appearance: + $250 plus travel</p>
+        <p class="mail"><a href="mailto:features@spiderdagod.com">features@spiderdagod.com</a><button type="button" class="copy" data-copy="features@spiderdagod.com">Copy</button></p>
+      </div>
+      <div class="tier">
+        <h3>Media</h3>
+        <p class="price">By request</p>
+        <p>Interviews, podcasts, radio, freestyles and premieres. Rates vary by outlet.</p>
+        <p class="mail"><a href="mailto:media@spiderdagod.com">media@spiderdagod.com</a><button type="button" class="copy" data-copy="media@spiderdagod.com">Copy</button></p>
+      </div>
     </div>
-    <div class="booking">
-      <span>Rates on request. Half upfront, credited as “feat. Spiderdagod.”</span>
-      <span class="placeholder">Booking contact goes here</span>
-    </div>
+    <p class="booking">Half upfront to confirm. Balance due before delivery or showtime.</p>
   </div>
 </section>
 
@@ -277,6 +296,13 @@ footer .wrap{padding-block:40px 56px;display:flex;flex-wrap:wrap;justify-content
     ctx.globalAlpha = 1;
   }
   draw(); addEventListener("resize", draw);
+
+  // copy email buttons
+  document.querySelectorAll(".copy").forEach(b => b.addEventListener("click", () => {
+    const t = b.dataset.copy, done = () => { b.textContent = "Copied"; setTimeout(() => b.textContent = "Copy", 1600); };
+    const select = () => { const a = b.previousElementSibling, r = document.createRange(); r.selectNodeContents(a); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Selected"; };
+    try { navigator.clipboard.writeText(t).then(done, select); } catch (e) { select(); }
+  }));
 })();
 </script>
 </body>
