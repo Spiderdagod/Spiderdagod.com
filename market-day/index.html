@@ -1,21 +1,314 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>MarketDay</title>
+<title>Market Day</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
-body{margin:0;background:#f4f4f2;color:#1b1a1f;font-family:system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif}
-main{max-width:640px;margin:0 auto;padding:32px 16px 48px;display:grid;gap:16px}
-img{width:100%;height:auto;display:block;background:#fff;border:1px solid #dcdad5}
-a{color:#1b1a1f;font-size:14px}
+:root{--bg:#0b0f14;--panel:#131a22;--line:#223040;--text:#e6edf3;--mut:#8b9bb0;--up:#22c55e;--down:#ef4444;--acc:#facc15}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:520px;margin:0 auto;padding:14px 14px 110px}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace}
+header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px}
+.logo{font-weight:800;font-size:20px;letter-spacing:-.5px}.logo span{color:var(--acc)}
+.sub{color:var(--mut);font-size:12px}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.stat .k{color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.stat .v{font-size:16px;font-weight:700;margin-top:2px}
+.news{background:linear-gradient(135deg,#1a1405,#131a22);border:1px solid #4d3d0a;border-radius:12px;padding:14px;margin-bottom:12px}
+.tag{display:inline-block;background:var(--down);color:#fff;font-size:10px;font-weight:800;padding:2px 6px;border-radius:4px;letter-spacing:1px}
+.headline{font-size:18px;font-weight:800;line-height:1.3;margin:8px 0}
+.term{font-size:13px;color:var(--acc);cursor:pointer;user-select:none}
+.def{font-size:13px;color:#cfd8e3;margin-top:6px;line-height:1.45;display:none}
+.def.show{display:block}
+.stock{background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:8px;overflow:hidden}
+.row{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer}
+.tk{font-weight:700;font-size:15px}.nm{color:var(--mut);font-size:11px}
+.grow{flex:1;min-width:0}
+.px{text-align:right}.px .p{font-weight:700}.px .c{font-size:12px}
+.up{color:var(--up)}.down{color:var(--down)}
+.hold{font-size:11px;color:var(--acc)}
+.actions{display:none;gap:6px;padding:0 12px 12px;flex-wrap:wrap}
+.stock.open .actions{display:flex}
+.btn{border:0;border-radius:8px;padding:9px 10px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit}
+.b-buy{background:#14532d;color:#bbf7d0}.b-sell{background:#5b1515;color:#fecaca}
+.btn:disabled{opacity:.35;cursor:default}
+.actions .btn{flex:1}
+.cta{position:fixed;left:0;right:0;bottom:0;padding:12px 14px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 30%)}
+.cta .btn{display:block;width:100%;max-width:492px;margin:0 auto;background:var(--acc);color:#111;font-size:16px;padding:14px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-end;justify-content:center;z-index:5}
+.modal.show{display:flex}
+.sheet{background:var(--panel);border-top:1px solid var(--line);border-radius:16px 16px 0 0;width:100%;max-width:520px;max-height:88vh;overflow:auto;padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
+.sheet h2{margin:0 0 4px;font-size:20px}
+.lesson{background:#0f1720;border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:8px;padding:10px 12px;margin:12px 0;font-size:14px;line-height:1.45}
+.lesson b{color:var(--acc)}
+.mv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}
+.big{font-size:34px;font-weight:800;margin:6px 0}
+.grid{font-size:22px;letter-spacing:2px;margin:8px 0}
+.toast{font-size:12px;color:var(--up);height:16px;margin-top:6px}
+textarea.copy{width:100%;background:#0b0f14;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px;font-family:'JetBrains Mono',monospace;font-size:12px;display:none}
+.flash{animation:fl .6s}
+@keyframes fl{0%{background:#2a3a10}100%{background:var(--panel)}}
+.terms li{margin-bottom:6px;font-size:13px;color:#cfd8e3}
+.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
 </style>
 </head>
 <body>
-<main>
-<img src="market-day.png" alt="MarketDay, Daily #1, Day 1 of 10: $10,000 net worth, a pre-market headline about Helix Bio being acquired at a 30% premium, and five stocks to trade: Nimbus Cloud, Helix Bio, Petrova Energy, SkyLark Airlines and Burger Barn.">
-<a href="market-day.pdf">Open the PDF</a>
-</main>
+<div class="wrap">
+  <header>
+    <div><div class="logo">MARKET<span>DAY</span></div><div class="sub mono" id="mode"></div></div>
+    <div class="sub mono" id="dayLbl"></div>
+  </header>
+  <div class="stats">
+    <div class="stat"><div class="k">Net worth</div><div class="v mono" id="nw"></div></div>
+    <div class="stat"><div class="k">Cash</div><div class="v mono" id="cash"></div></div>
+    <div class="stat"><div class="k">Return</div><div class="v mono" id="ret"></div></div>
+  </div>
+  <div class="news">
+    <span class="tag">BREAKING · PRE-MARKET</span>
+    <div class="headline" id="headline"></div>
+    <div class="term" id="termBtn"></div>
+    <div class="def" id="termDef"></div>
+  </div>
+  <div class="sub" style="margin:0 2px 8px">Tap a stock to trade. Then close the day and see how the market reacts.</div>
+  <div id="stocks"></div>
+</div>
+<div class="cta"><button class="btn" id="closeBtn">🔔 Close the trading day</button></div>
+
+<div class="modal" id="resModal"><div class="sheet" id="resBody"></div></div>
+
+<script>
+// ---------- seeded RNG ----------
+function hashStr(s){let h=1779033703^s.length;for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=h<<13|h>>>19}return h>>>0}
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+const DAYS=10, START=10000;
+const BASE=[
+ {t:'NMBS',n:'Nimbus Cloud',s:'tech',p:142},
+ {t:'HLX',n:'Helix Bio',s:'bio',p:38},
+ {t:'PTRV',n:'Petrova Energy',s:'energy',p:71},
+ {t:'SKYL',n:'SkyLark Airlines',s:'air',p:24},
+ {t:'BRGR',n:'Burger Barn',s:'consumer',p:56}
+];
+const ALL=['tech','bio','energy','air','consumer'];
+// Event templates. eff: [min,max] % for target, or sector map for market events.
+const EVENTS=[
+ {id:'beat',sec:ALL,flip:true,txt:n=>`${n} crushes earnings estimates and raises full-year guidance`,eff:[9,15],term:'Guidance',def:"A company's own forecast of future sales and profits. Raising it signals confidence — markets often react more to guidance than to the quarter just reported."},
+ {id:'miss',sec:ALL,txt:n=>`${n} misses revenue estimates; CFO to step down`,eff:[-16,-10],term:'Earnings miss',def:"When results come in below what Wall Street analysts expected (the 'consensus estimate'). A management exit on the same day adds uncertainty."},
+ {id:'buyback',sec:['tech','energy','consumer'],flip:true,txt:n=>`${n} announces $3B share buyback program`,eff:[4,7],term:'Buyback',def:"The company buys its own shares on the open market. Fewer shares outstanding means each remaining share owns a bigger slice of profits."},
+ {id:'split',sec:['tech','consumer'],txt:n=>`${n} announces 4-for-1 stock split`,eff:[1,4],term:'Stock split',def:"Each share becomes several cheaper shares. The company's total value doesn't change — any pop is mostly psychology and easier access for small investors."},
+ {id:'short',sec:ALL,txt:n=>`Short seller Gray Owl Research alleges accounting problems at ${n}`,eff:[-15,-9],term:'Short seller',def:"An investor who profits when a stock falls, by borrowing shares, selling them, and buying back cheaper later. Public short reports can tank a stock fast."},
+ {id:'upgrade',sec:ALL,flip:true,txt:n=>`Analyst at Whitmore & Co upgrades ${n} to "Buy," raises price target 20%`,eff:[3,6],term:'Price target',def:"An analyst's estimate of where a stock should trade in about 12 months. Upgrades move prices, but analysts are wrong often."},
+ {id:'acq',sec:['tech','bio','consumer'],txt:n=>`${n} agrees to be acquired at a 30% premium to yesterday's close`,eff:[22,28],term:'Acquisition premium',def:"Buyers usually pay above the current price to win shareholder approval. The stock jumps toward the offer price but rarely all the way, because deals can fall apart."},
+ {id:'divcut',sec:['energy','consumer','air'],txt:n=>`${n} cuts its dividend in half to preserve cash`,eff:[-10,-6],term:'Dividend',def:"A cash payment companies make to shareholders. Cutting it signals money trouble and drives away income-focused investors."},
+ {id:'insider',sec:ALL,flip:true,txt:n=>`${n} CEO buys $5M of company stock on the open market`,eff:[3,5],term:'Insider buying',def:"When executives buy their own company's stock with personal money. It's legal when disclosed, and traders read it as a vote of confidence."},
+ {id:'fda',grp:'fda',fixed:'bio',flip:true,txt:n=>`FDA approves ${n}'s lead cancer drug`,eff:[18,30],term:'Catalyst',def:"A specific upcoming event — like a drug approval — that can move a stock sharply. Biotech stocks often live or die by them."},
+ {id:'fdafail',grp:'fda',fixed:'bio',txt:n=>`${n}'s Phase 3 trial fails to meet its primary endpoint`,eff:[-35,-25],term:'Phase 3 trial',def:"The final, largest stage of drug testing before approval. A failure here can wipe out years of work — and most of a small biotech's value."},
+ {id:'recall',grp:'cons',fixed:'consumer',txt:n=>`${n} recalls 2 million pounds of beef over contamination fears`,eff:[-11,-7],term:'Headline risk',def:"The danger that bad press alone hurts a stock, even before the real financial damage is known."},
+ {id:'hike',grp:'fed',mkt:{tech:-6,bio:-5,energy:-1,air:-3,consumer:-2},txt:()=>`Fed raises rates 0.5% and signals more hikes ahead`,term:'Interest rates',def:"Higher rates make borrowing costlier and make future profits worth less today — so growth stocks like tech usually fall hardest."},
+ {id:'cut',grp:'fed',mkt:{tech:5,bio:4,energy:1,air:3,consumer:2},txt:()=>`Fed cuts rates, says inflation is "under control"`,term:'Rate cut',def:"Cheaper money tends to lift stocks, especially growth companies whose value depends on profits far in the future."},
+ {id:'oil',grp:'oil',mkt:{tech:0,bio:0,energy:9,air:-9,consumer:-2},txt:()=>`Oil jumps 12% after supply disruption in a major shipping lane`,term:'Input costs',def:"Fuel is an airline's biggest cost and an oil producer's product — the same headline helps one and hurts the other."},
+ {id:'oildrop',grp:'oil',mkt:{tech:0,bio:0,energy:-8,air:7,consumer:1},txt:()=>`OPEC agrees to boost output; oil tumbles 10%`,term:'Supply and demand',def:"More supply means lower prices. Good for companies that buy fuel, bad for those that sell it."},
+ {id:'cpi',mkt:{tech:-5,bio:-3,energy:-1,air:-3,consumer:-3},txt:()=>`Inflation report comes in hotter than expected`,term:'CPI',def:"The Consumer Price Index measures how fast prices are rising. A hot number raises fears the Fed will keep rates high."},
+ {id:'jobs',mkt:{tech:-3,bio:-1,energy:-3,air:-5,consumer:1},txt:()=>`Jobs report shows surprise drop in hiring; recession fears grow`,term:'Defensive stocks',def:"Companies people buy from in good times and bad (cheap food, utilities). They tend to hold up when the economy looks shaky, while travel and luxury get hit."}
+];
+const FLIP_DEF="Sell the news: when good news is widely expected, it's already “priced in.” Traders who bought on the rumor take profits on the announcement, so the stock can fall on great news.";
+
+// ---------- build a market from a seed ----------
+function buildMarket(seedStr){
+  const r=mulberry(hashStr(seedStr));
+  const rng=(a,b)=>a+(b-a)*r();
+  const stocks=BASE.map(s=>({...s,p:+(s.p*rng(.85,1.15)).toFixed(2)}));
+  // shuffle events
+  const pool=EVENTS.slice();
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}
+  const used=new Set(),sched=[];let acqDone=false,acqT=null;
+  for(const e of pool){
+    if(sched.length>=DAYS)break;
+    if(e.grp&&used.has(e.grp))continue;
+    let target=null;
+    if(!e.mkt){
+      const cands=stocks.filter(s=>s.t!==acqT&&(e.fixed?s.s===e.fixed:e.sec.includes(s.s)));
+      if(!cands.length)continue;
+      target=cands[Math.floor(r()*cands.length)];
+      if(e.id==='acq'){ if(acqDone)continue; acqDone=true; acqT=target.t; }
+    }
+    if(e.grp)used.add(e.grp);
+    const eff={};
+    stocks.forEach(s=>eff[s.t]=0);
+    let flipped=false;
+    if(e.mkt){stocks.forEach(s=>eff[s.t]=e.mkt[s.s]*rng(.7,1.3))}
+    else{
+      let v=rng(e.eff[0],e.eff[1]);
+      if(e.flip&&r()<.22){v=-rng(2,6);flipped=true}
+      eff[target.t]=v;
+    }
+    const drift=rng(-1.2,1.2);
+    const noise={};stocks.forEach(s=>noise[s.t]=rng(-2,2));
+    sched.push({e,target,eff,flipped,drift,noise,headline:e.txt(target?target.n:'')});
+  }
+  return {stocks,sched};
+}
+
+// ---------- game state ----------
+function todayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function dailyNumber(){const d=new Date();const n=Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-Date.UTC(2026,9,31))/864e5)+1;return Math.max(1,n)}
+
+let G;
+function newGame(practice){
+  const seed=practice?('practice-'+Math.random()):('daily-'+todayKey());
+  const m=buildMarket(seed);
+  G={practice,seed,stocks:m.stocks,sched:m.sched,day:0,cash:START,hold:{},hist:{},worthHist:[START],learned:[],open:null,acquired:null};
+  G.stocks.forEach(s=>{G.hold[s.t]=0;G.hist[s.t]=[s.p]});
+  G.bench={};G.stocks.forEach(s=>G.bench[s.t]=(START/5)/s.p);
+  render();
+}
+const fmt=v=>'$'+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmt0=v=>'$'+Math.round(v).toLocaleString('en-US');
+const pct=v=>(v>=0?'+':'')+v.toFixed(2)+'%';
+function worth(){return G.cash+G.stocks.reduce((a,s)=>a+G.hold[s.t]*s.p,0)}
+
+function spark(arr,up){
+  if(arr.length<2)return '<svg width="64" height="24"></svg>';
+  const mn=Math.min(...arr),mx=Math.max(...arr),rg=mx-mn||1;
+  const pts=arr.map((v,i)=>`${(i/(arr.length-1)*62+1).toFixed(1)},${(22-(v-mn)/rg*20).toFixed(1)}`).join(' ');
+  return `<svg width="64" height="24"><polyline points="${pts}" fill="none" stroke="${up?'#22c55e':'#ef4444'}" stroke-width="1.8"/></svg>`;
+}
+
+function render(){
+  const ev=G.sched[G.day];
+  document.getElementById('mode').textContent=G.practice?'PRACTICE ROUND':'DAILY #'+dailyNumber();
+  document.getElementById('dayLbl').textContent='DAY '+(G.day+1)+'/'+DAYS;
+  const w=worth(),r=(w/START-1)*100;
+  document.getElementById('nw').textContent=fmt0(w);
+  document.getElementById('cash').textContent=fmt0(G.cash);
+  const re=document.getElementById('ret');re.textContent=pct(r);re.className='v mono '+(r>=0?'up':'down');
+  document.getElementById('headline').textContent=ev.headline;
+  document.getElementById('termBtn').textContent='📘 Key term: '+ev.e.term+' — what does this mean?';
+  const td=document.getElementById('termDef');td.textContent=ev.e.def;td.classList.remove('show');
+  const box=document.getElementById('stocks');
+  box.innerHTML=G.stocks.map(s=>{
+    const h=G.hist[s.t],prev=h.length>1?h[h.length-2]:h[0],ch=(s.p/prev-1)*100;
+    const first=h[0],up=s.p>=first;
+    const hv=G.hold[s.t];
+    const maxBuy=Math.floor(G.cash/s.p);
+    const isAcq=G.acquired===s.t;
+    return `<div class="stock ${G.open===s.t?'open':''}" id="st-${s.t}">
+      <div class="row" data-t="${s.t}">
+        <div class="grow"><div class="tk mono">${s.t}${isAcq?' <span class="sub">(deal pending)</span>':''}</div><div class="nm">${s.n}</div>${hv?`<div class="hold mono">${hv} sh · ${fmt0(hv*s.p)}</div>`:''}</div>
+        ${spark(h,up)}
+        <div class="px mono"><div class="p">${fmt(s.p)}</div><div class="c ${ch>=0?'up':'down'}">${h.length>1?pct(ch):'—'}</div></div>
+      </div>
+      <div class="actions">
+        <button class="btn b-buy" data-a="buy1k" data-t="${s.t}" ${maxBuy<1?'disabled':''}>Buy $1K</button>
+        <button class="btn b-buy" data-a="buymax" data-t="${s.t}" ${maxBuy<1?'disabled':''}>Buy max</button>
+        <button class="btn b-sell" data-a="sellhalf" data-t="${s.t}" ${hv<2?'disabled':''}>Sell ½</button>
+        <button class="btn b-sell" data-a="sellall" data-t="${s.t}" ${hv<1?'disabled':''}>Sell all</button>
+      </div></div>`}).join('');
+}
+
+document.getElementById('termBtn').onclick=()=>document.getElementById('termDef').classList.toggle('show');
+document.getElementById('stocks').addEventListener('click',e=>{
+  const b=e.target.closest('button');
+  if(b){
+    const s=G.stocks.find(x=>x.t===b.dataset.t);let q=0;
+    if(b.dataset.a==='buy1k'){q=Math.min(Math.floor(1000/s.p),Math.floor(G.cash/s.p));if(q<1)q=Math.floor(G.cash/s.p)>=1?1:0}
+    if(b.dataset.a==='buymax')q=Math.floor(G.cash/s.p);
+    if(q>0){G.cash-=q*s.p;G.hold[s.t]+=q}
+    if(b.dataset.a==='sellhalf'){q=Math.floor(G.hold[s.t]/2);G.cash+=q*s.p;G.hold[s.t]-=q}
+    if(b.dataset.a==='sellall'){q=G.hold[s.t];G.cash+=q*s.p;G.hold[s.t]=0}
+    G.cash=Math.round(G.cash*100)/100;
+    render();const el=document.getElementById('st-'+s.t);if(el)el.classList.add('flash');
+    return;
+  }
+  const row=e.target.closest('.row');
+  if(row){G.open=G.open===row.dataset.t?null:row.dataset.t;render()}
+});
+
+document.getElementById('closeBtn').onclick=()=>{
+  if(document.getElementById('resModal').classList.contains('show'))return;
+  const ev=G.sched[G.day];const before=worth();const moves=[];
+  G.stocks.forEach(s=>{
+    let m;
+    if(G.acquired===s.t){m=(Math.random()<.5?-1:1)*0.2}
+    else m=ev.eff[s.t]+ev.noise[s.t]+ev.drift;
+    s.p=Math.max(1,+(s.p*(1+m/100)).toFixed(2));
+    G.hist[s.t].push(s.p);moves.push({s,m});
+  });
+  if(ev.e.id==='acq')G.acquired=ev.target.t;
+  const after=worth();G.worthHist.push(after);
+  G.learned.push({term:ev.e.term,def:ev.e.def});
+  if(ev.flipped)G.learned.push({term:'Sell the news',def:FLIP_DEF});
+  const dpl=after-before;
+  let reaction='';
+  if(ev.target){const m=moves.find(x=>x.s.t===ev.target.t).m;reaction=`<b>${ev.target.t}</b> ${m>=0?'rose':'fell'} <span class="${m>=0?'up':'down'}">${pct(m)}</span>`+(ev.flipped?' — <b>sold the news!</b>':'')}
+  else reaction='The whole market reacted.';
+  const last=G.day===DAYS-1;
+  document.getElementById('resBody').innerHTML=`
+    <div class="sub mono">MARKET CLOSE · DAY ${G.day+1}</div>
+    <h2>${reaction}</h2>
+    <div class="big mono ${dpl>=0?'up':'down'}">${dpl>=0?'+':'−'}${fmt(Math.abs(dpl))}</div>
+    <div class="sub">Your portfolio today · Net worth ${fmt0(after)}</div>
+    <div style="margin-top:10px">${moves.map(({s,m})=>`<div class="mv mono"><span>${s.t}</span><span>${fmt(s.p)}</span><span class="${m>=0?'up':'down'}">${pct(m)}</span></div>`).join('')}</div>
+    <div class="lesson">📘 <b>${ev.e.term}:</b> ${ev.e.def}</div>
+    ${ev.flipped?`<div class="lesson">🔄 <b>Plot twist — sell the news:</b> ${FLIP_DEF.replace('Sell the news: ','')}</div>`:''}
+    <button class="btn" id="nextBtn" style="width:100%;background:var(--acc);color:#111;font-size:16px;padding:14px;margin-top:6px">${last?'See final results →':'☀️ Next morning →'}</button>`;
+  document.getElementById('resModal').classList.add('show');
+  document.getElementById('nextBtn').onclick=()=>{
+    document.getElementById('resModal').classList.remove('show');
+    if(last)return showEnd();
+    G.day++;G.open=null;render();window.scrollTo(0,0);
+  };
+};
+
+function showEnd(){
+  const w=worth(),r=(w/START-1)*100;
+  const bench=G.stocks.reduce((a,s)=>a+G.bench[s.t]*s.p,0),br=(bench/START-1)*100;
+  const sq=[];for(let i=1;i<G.worthHist.length;i++){const d=(G.worthHist[i]/G.worthHist[i-1]-1)*100;sq.push(d>0.1?'🟩':d<-0.1?'🟥':'⬜')}
+  const beat=r>br;
+  const label=G.practice?'Market Day (practice)':'Market Day #'+dailyNumber();
+  const share=`${label} 📈\n${pct(r)} · ${fmt0(w)}\n${sq.join('')}\n${beat?'Beat the market 🏆':'Market won this time'} (index ${pct(br)})`;
+  let bestTxt='';
+  if(!G.practice){
+    const k='md-daily-'+todayKey();if(!store.get(k))store.set(k,{r});
+    const best=store.get('md-best');if(best===null||r>best)store.set('md-best',r);
+    bestTxt=`Your best daily: ${pct(Math.max(r,best??r))}`;
+  }
+  const uniq=[];const seen=new Set();G.learned.forEach(x=>{if(!seen.has(x.term)){seen.add(x.term);uniq.push(x)}});
+  document.getElementById('resBody').innerHTML=`
+    <div class="sub mono">${label.toUpperCase()} · FINAL BELL</div>
+    <div class="big mono ${r>=0?'up':'down'}">${pct(r)}</div>
+    <div class="mono">${fmt(w)}</div>
+    <div class="grid">${sq.join('')}</div>
+    <div class="lesson">${beat?'🏆 You beat the market.':'📉 The market beat you.'} An equal split across all 5 stocks, held all 10 days, returned <b class="mono">${pct(br)}</b>. Beating "buy and hold" is the real test of a trader.</div>
+    ${bestTxt?`<div class="sub">${bestTxt}</div>`:''}
+    <button class="btn b-buy" id="copyBtn" style="width:100%;margin-top:12px;padding:12px">📋 Copy result to share</button>
+    <textarea class="copy" id="copyTxt" rows="5" readonly></textarea>
+    <div class="toast" id="toast"></div>
+    <h3 style="margin:14px 0 8px;font-size:15px">Terms you learned today</h3>
+    <ul class="terms" style="padding-left:18px;margin:0">${uniq.map(x=>`<li><b>${x.term}</b> — ${x.def}</li>`).join('')}</ul>
+    <button class="btn ghost" id="againBtn" style="width:100%;margin-top:14px;padding:12px">🎲 Play a practice market</button>
+    <div class="sub" style="margin-top:10px;text-align:center">${G.practice?'':'A new daily market drops at midnight.'} Fictional companies. Not financial advice.</div>`;
+  document.getElementById('resModal').classList.add('show');
+  document.getElementById('copyBtn').onclick=async()=>{
+    const t=document.getElementById('toast');
+    try{await navigator.clipboard.writeText(share);t.textContent='Copied! Paste it anywhere.'}
+    catch(e){const ta=document.getElementById('copyTxt');ta.value=share;ta.style.display='block';ta.select();t.textContent='Select and copy the text above.'}
+  };
+  document.getElementById('againBtn').onclick=()=>{document.getElementById('resModal').classList.remove('show');newGame(true);window.scrollTo(0,0)};
+}
+
+// start: if daily already played, go straight to practice with a note
+(function(){
+  const done=store.get('md-daily-'+todayKey());
+  newGame(!!done);
+  if(done){document.getElementById('mode').textContent='PRACTICE · daily done ('+pct(done.r)+')'}
+})();
+</script>
 </body>
 </html>
