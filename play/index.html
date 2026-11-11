@@ -137,6 +137,8 @@ canvas{display:block;width:100%;height:100%}
           <button class="btn" id="barsAgain" type="button">Play again</button>
           <button class="btn ghost" id="barsShare" type="button">Copy score</button>
         </div>
+        <a class="btn" id="barsClaim" hidden href="https://docs.google.com/forms/d/e/1FAIpQLSdMmfGJLdwEsRiPj4lcbakYGeDbxTOYksfWVu8f3IJzeJuClQ/viewform" target="_blank" rel="noopener">Claim 25% off →</a>
+        <p id="barsUnlockHint">Get 8 of 10 right to unlock 25% off the shop.</p>
         <p>Hear every bar Nov 20. <a href="../">Pre-save on spiderdagod.com</a></p>
       </div>
     </div>
@@ -438,6 +440,8 @@ const Bars = (() => {
     $("barsTitle").textContent = right === deck.length ? "Every bar" : right >= 7 ? "Real one" : "Run it back";
     $("barsFinal").textContent = pts;
     $("barsBest").textContent = right + " of " + deck.length + " right · Best: " + best;
+    const unlocked = right >= 8;
+    $("barsClaim").hidden = !unlocked; $("barsUnlockHint").hidden = unlocked;
     $("barsOver").hidden = false;
   }
   addEventListener("keydown", e => {
