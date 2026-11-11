@@ -107,6 +107,12 @@ section .wrap{padding-block:64px;display:grid;gap:28px}
 .copy{font:500 12px/1 var(--mono);background:transparent;color:var(--dust);border:1px solid var(--rule);padding:6px 9px;cursor:pointer}
 .copy:hover{color:var(--bone);border-color:var(--gold)}
 
+.merch{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.merch a{display:grid;gap:10px;text-decoration:none;border:1px solid var(--rule);padding:12px}
+.merch a:hover{border-color:var(--gold)}
+.merch img{width:100%;height:auto;display:block;background:var(--ash)}
+.merch b{font-weight:800;font-size:16px}
+.merch span{font-family:var(--mono);font-size:13px;color:var(--gold)}
 footer .wrap{padding-block:40px 56px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:18px;align-items:center}
 .links{display:flex;flex-wrap:wrap;gap:8px 20px;font-family:var(--mono);font-size:13px}
 .links a{color:var(--dust);text-decoration:none;border-bottom:1px solid var(--rule)}
@@ -114,7 +120,7 @@ footer .wrap{padding-block:40px 56px;display:flex;flex-wrap:wrap;justify-content
 .fine{font-family:var(--mono);font-size:12px;color:var(--dust)}
 
 @media (max-width:760px){
-  .story,.air,.tiers,.hero-grid{grid-template-columns:minmax(0,1fr)}
+  .story,.air,.tiers,.merch,.hero-grid{grid-template-columns:minmax(0,1fr)}
   .art{max-width:420px}
   .hero .wrap{padding-block:40px 48px}
   section .wrap{padding-block:48px}
@@ -142,6 +148,7 @@ footer .wrap{padding-block:40px 56px;display:flex;flex-wrap:wrap;justify-content
       <div class="actions">
         <a class="btn primary" id="presave" href="https://foundation-media.ffm.to/_celebration" target="_blank" rel="noopener">Pre-save “Celebration”</a>
         <a class="btn" href="https://open.spotify.com/artist/6DuAQaqnbEouNWoDz6XtIR" target="_blank" rel="noopener">Spotify</a>
+        <a class="btn" href="#shop">Shop merch</a>
         <a class="btn" href="https://www.youtube.com/watch?v=w7VlIhIySJs" target="_blank" rel="noopener">Watch “Still Not One”</a>
       </div>
     </div>
@@ -165,6 +172,20 @@ footer .wrap{padding-block:40px 56px;display:flex;flex-wrap:wrap;justify-content
       <p style="color:var(--dust)">Three games from the Godfall world, with bars from “Celebration” before it drops.</p>
     </div>
     <a class="btn primary" href="play/">Play now</a>
+  </div>
+</section>
+
+<section id="shop">
+  <div class="wrap">
+    <div style="display:flex;flex-wrap:wrap;gap:12px 28px;align-items:end;justify-content:space-between">
+      <div style="display:grid;gap:6px"><span class="eyebrow">Shop</span><h2>Official merch</h2></div>
+      <a class="btn primary" href="https://spiderdagod-shop.fourthwall.com/" target="_blank" rel="noopener">Visit the store</a>
+    </div>
+    <div class="merch">
+      <a href="https://spiderdagod-shop.fourthwall.com/products/godfall-heavyweight-tee" target="_blank" rel="noopener"><img src="shop/godfall.jpg" width="800" height="800" alt="GODFALL tee design" loading="lazy"><b>GODFALL Heavyweight Tee</b><span>$32</span></a>
+      <a href="https://spiderdagod-shop.fourthwall.com/products/the-crown-was-never-given-tee" target="_blank" rel="noopener"><img src="shop/crown.jpg" width="800" height="800" alt="The Crown Was Never Given tee design" loading="lazy"><b>The Crown Was Never Given Tee</b><span>$32</span></a>
+      <a href="https://spiderdagod-shop.fourthwall.com/products/celebration-release-tee" target="_blank" rel="noopener"><img src="shop/celebration.jpg" width="800" height="800" alt="Celebration release tee design" loading="lazy"><b>Celebration Release Tee</b><span>$32</span></a>
+    </div>
   </div>
 </section>
 
@@ -255,6 +276,7 @@ footer .wrap{padding-block:40px 56px;display:flex;flex-wrap:wrap;justify-content
     <nav class="links" aria-label="Spiderdagod elsewhere">
       <a href="play/">Godfall Arcade</a>
       <a href="videos/">Videos</a>
+      <a href="https://spiderdagod-shop.fourthwall.com/" target="_blank" rel="noopener">Shop</a>
       <a href="https://open.spotify.com/artist/6DuAQaqnbEouNWoDz6XtIR" target="_blank" rel="noopener">Spotify</a>
       <a href="https://music.apple.com/us/artist/spiderdagod/580326338" target="_blank" rel="noopener">Apple Music</a>
       <a href="https://youtube.com/playlist?list=PLO2jATkKPuozajN3eS0fgNH-Z_4VuC9eZ" target="_blank" rel="noopener">YouTube</a>
