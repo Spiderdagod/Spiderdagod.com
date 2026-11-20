@@ -11,7 +11,7 @@
 </script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Spiderdagod, lyrical rap out of Buffalo, NY. New single &quot;Celebration&quot; out November 20, 2026, from the EP Godfall.">
+<meta name="description" content="Spiderdagod, lyrical rap out of Buffalo, NY. New single &quot;Celebration&quot; out now, from the EP Godfall.">
 <meta property="og:image" content="https://spiderdagod.com/celebration-art.jpg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -146,16 +146,11 @@ footer .wrap{padding-block:40px 56px;display:flex;flex-wrap:wrap;justify-content
     <p class="mark">Spider<span>da</span>god</p>
     <div class="hero-grid">
     <div class="release">
-      <h1>New single <em>“Celebration”</em> out Friday, November 20, 2026</h1>
+      <h1>New single <em>“Celebration”</em> out now</h1>
       <p>The first solo single since <i>Good People Die</i>, and the first look at <i>Godfall</i>, the project first announced in 2018.</p>
-      <div class="count" id="count" aria-live="polite">
-        <div><b id="d">--</b><small>Days</small></div>
-        <div><b id="h">--</b><small>Hours</small></div>
-        <div><b id="m">--</b><small>Minutes</small></div>
-      </div>
       <div class="actions">
-        <a class="btn primary" id="presave" href="https://foundation-media.ffm.to/_celebration" target="_blank" rel="noopener">Pre-save “Celebration”</a>
-        <a class="btn" href="https://open.spotify.com/artist/6DuAQaqnbEouNWoDz6XtIR" target="_blank" rel="noopener">Spotify</a>
+        <a class="btn primary" href="https://open.spotify.com/album/4X1zelaXgU55ZKIRi3VGfg" target="_blank" rel="noopener">Stream “Celebration” on Spotify</a>
+        <a class="btn" href="https://foundation-media.ffm.to/_celebration" target="_blank" rel="noopener">All platforms</a>
         <a class="btn" href="#shop">Shop merch</a>
         <a class="btn" href="https://www.youtube.com/watch?v=w7VlIhIySJs" target="_blank" rel="noopener">Watch “Still Not One”</a>
       </div>
@@ -304,20 +299,6 @@ footer .wrap{padding-block:40px 56px;display:flex;flex-wrap:wrap;justify-content
 
 <script>
 (function(){
-  // countdown to midnight ET, Nov 20 2026
-  const target = Date.parse("2026-11-20T00:00:00-05:00");
-  const pad = n => String(n).padStart(2,"0");
-  function tick(){
-    const ms = target - Date.now();
-    const box = document.getElementById("count");
-    if(ms <= 0){ box.innerHTML = '<div><b>Out now</b><small>Celebration</small></div>'; return; }
-    const d = Math.floor(ms/864e5), h = Math.floor(ms/36e5)%24, m = Math.floor(ms/6e4)%60;
-    document.getElementById("d").textContent = d;
-    document.getElementById("h").textContent = pad(h);
-    document.getElementById("m").textContent = pad(m);
-  }
-  tick(); setInterval(tick, 30000);
-
   // the web: a static orb web anchored to the top right of the hero
   const c = document.getElementById("web"), ctx = c.getContext("2d");
   function draw(){
